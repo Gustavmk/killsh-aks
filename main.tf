@@ -85,7 +85,17 @@ resource "azurerm_kubernetes_cluster" "main" {
     }
   }
 
+  # Configure Log Analytics
+  dynamic "oms_agent" {
+    for_each = var.enable_log_analytics_workspace == true ? 1 : 0
+    content {
+      log_analytics_workspace_id = azurerm_log_analytics_workspace.main[0].id
+    }
+  }
+
+
 # TODO - Addon_Profile is a feature deprecated!
+/*
   addon_profile {
     http_application_routing {
       enabled = var.enable_http_application_routing
@@ -115,6 +125,7 @@ resource "azurerm_kubernetes_cluster" "main" {
       }
     }
   }
+*/
 
   role_based_access_control {
     enabled = var.enable_role_based_access_control
