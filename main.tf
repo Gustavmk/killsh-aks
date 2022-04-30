@@ -87,7 +87,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   # Configure Log Analytics
   dynamic "oms_agent" {
-    for_each = var.enable_log_analytics_workspace == true ? 1 : []
+    for_each = var.enable_log_analytics_workspace == true ? [1] : []
     content {
       log_analytics_workspace_id = azurerm_log_analytics_workspace.main[0].id
     }
@@ -130,7 +130,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   azure_active_directory_role_based_access_control {
     enabled = var.enable_role_based_access_control
 
-    dynamic "azure_active_directory_role_based_access_control" {
+    dynamic {
       for_each = var.enable_role_based_access_control && var.rbac_aad_managed ? ["rbac"] : []
       content {
         managed                = true
@@ -138,7 +138,7 @@ resource "azurerm_kubernetes_cluster" "main" {
       }
     }
 
-    dynamic "azure_active_directory_role_based_access_control" {
+    dynamic {
       for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac"] : []
       content {
         managed           = false
