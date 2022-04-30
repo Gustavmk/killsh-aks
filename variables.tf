@@ -309,7 +309,7 @@ variable "identity_type" {
 
 variable "user_assigned_identity_id" {
   description = "(Optional) The ID of a user assigned identity."
-  type        = string
+  type        = list(string)
   default     = null
 }
 

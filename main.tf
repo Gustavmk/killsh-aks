@@ -80,14 +80,14 @@ resource "azurerm_kubernetes_cluster" "main" {
   dynamic "identity" {
     for_each = var.client_id == "" || var.client_secret == "" ? ["identity"] : []
     content {
-      type                      = var.identity_type
-      user_assigned_identity_id = var.user_assigned_identity_id
+      type           = var.identity_type
+      identity_ids   = var.user_assigned_identity_id
     }
   }
 
   # Configure Log Analytics
   dynamic "oms_agent" {
-    for_each = var.enable_log_analytics_workspace == true ? 1 : 0
+    for_each = var.enable_log_analytics_workspace == true ? 1 : []
     content {
       log_analytics_workspace_id = azurerm_log_analytics_workspace.main[0].id
     }
