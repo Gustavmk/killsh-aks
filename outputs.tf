@@ -44,9 +44,13 @@ output "kube_admin_config_raw" {
   value     = azurerm_kubernetes_cluster.main.kube_admin_config_raw
 }
 
+# TODO - Addon profile
+
+/*
 output "http_application_routing_zone_name" {
   value = length(azurerm_kubernetes_cluster.main.addon_profile) > 0 && length(azurerm_kubernetes_cluster.main.addon_profile[0].http_application_routing) > 0 ? azurerm_kubernetes_cluster.main.addon_profile[0].http_application_routing[0].http_application_routing_zone_name : ""
 }
+*/
 
 output "system_assigned_identity" {
   value = azurerm_kubernetes_cluster.main.identity
