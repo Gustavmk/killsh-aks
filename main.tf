@@ -130,7 +130,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   role_based_access_control {
     enabled = var.enable_role_based_access_control
 
-    dynamic "azure_active_directory" {
+    dynamic "azure_active_directory_role_based_access_control" {
       for_each = var.enable_role_based_access_control && var.rbac_aad_managed ? ["rbac"] : []
       content {
         managed                = true
@@ -138,7 +138,7 @@ resource "azurerm_kubernetes_cluster" "main" {
       }
     }
 
-    dynamic "azure_active_directory" {
+    dynamic "azure_active_directory_role_based_access_control" {
       for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac"] : []
       content {
         managed           = false
