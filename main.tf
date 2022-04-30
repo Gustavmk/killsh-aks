@@ -127,10 +127,13 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 */
 
-  azure_active_directory_role_based_access_control {
-    enabled = var.enable_role_based_access_control
+# TODO - fix conditional RBAC
 
-    dynamic {
+/* Code removed 
+
+  azure_active_directory_role_based_access_control {
+
+    dynamic "rbac" {
       for_each = var.enable_role_based_access_control && var.rbac_aad_managed ? ["rbac"] : []
       content {
         managed                = true
@@ -138,8 +141,8 @@ resource "azurerm_kubernetes_cluster" "main" {
       }
     }
 
-    dynamic {
-      for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac"] : []
+    dynamic "rbac_sp" {
+      for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac_sp"] : []
       content {
         managed           = false
         client_app_id     = var.rbac_aad_client_app_id
@@ -148,6 +151,8 @@ resource "azurerm_kubernetes_cluster" "main" {
       }
     }
   }
+
+*/
 
   network_profile {
     network_plugin     = var.network_plugin
