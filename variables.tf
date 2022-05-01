@@ -159,7 +159,7 @@ variable "rbac_aad_server_app_secret" {
 }
 
 variable "network_plugin" {
-  description = "Network plugin to use for networking."
+  description = "Network plugin to use for networking. POssible Values: kubenet or azure" 
   type        = string
   default     = "kubenet"
 }
