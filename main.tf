@@ -246,9 +246,63 @@ resource "azurerm_monitor_diagnostic_setting" "aks_cluster" {
     }
   }
 
+  log {
+    category = "kube-audit-admin"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "cloud-controller-manager"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+  
+  log {
+    category = "guard"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }  
+  
+  log {
+    category = "csi-azuredisk-controller"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "csi-azurefile-controller"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "csi-snapshot-controller"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
   metric {
     category = "AllMetrics"
-    enabled  = false
+    enabled  = true
 
     retention_policy {
       enabled = false
