@@ -18,7 +18,7 @@ module "network" {
 }
 
 module "aks" {
-  source                           = "git::https://github.com/ohkillsh/killsh-modulo-aks"
+  source                           = "git::https://github.com/ohkillsh/killsh-module-aks"
   resource_group_name              = azurerm_resource_group.aks.name
   kubernetes_version               = "1.22.6"
   orchestrator_version             = "1.22.6"
