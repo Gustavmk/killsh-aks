@@ -224,6 +224,12 @@ variable "agents_max_count" {
   default     = null
 }
 
+variable "cluster_max_surge" {
+  type = string
+  description = "value"
+  default = "50%"
+}
+
 variable "agents_min_count" {
   type        = number
   description = "Minimum number of nodes in a pool"

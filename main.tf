@@ -202,7 +202,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "main" {
   enable_node_public_ip = each.value.enable_node_public_ip
 
   upgrade_settings {
-    max_surge = var.max_surge
+    max_surge = var.cluster_max_surge
   }
 
   tags = var.tags
