@@ -173,7 +173,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   tags = var.tags
 }
 
-# TODO - configurar nodepool de forma dinamica 
+
+/* moved to new module
 resource "azurerm_kubernetes_cluster_node_pool" "main" {
   lifecycle {
     ignore_changes = [
@@ -207,6 +208,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "main" {
 
   tags = var.tags
 }
+*/
 
 resource "azurerm_log_analytics_workspace" "main" {
   count               = var.enable_log_analytics_workspace ? 1 : 0

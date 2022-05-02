@@ -19,7 +19,7 @@ resource "azurerm_resource_group" "example" {
 }
 
 module "network" {
-  source              = "git@github.com:ohkillsh/killsh-module-network.git"
+  source              = "git::https://github.com/ohkillsh/killsh-module-network.git"
   resource_group_name = azurerm_resource_group.example.name
   address_space       = "10.0.0.0/16"
   subnet_prefixes     = ["10.0.1.0/24"]
@@ -32,7 +32,7 @@ data "azuread_group" "aks_cluster_admins" {
 }
 
 module "aks" {
-  source                           = "git@github.com:ohkillsh/killsh-module-aks.git"
+  source                           = "git::https://github.com/ohkillsh/killsh-modulo-aks"
   resource_group_name              = azurerm_resource_group.example.name
   client_id                        = "your-service-principal-client-appid"
   client_secret                    = "your-service-principal-client-password"

@@ -330,27 +330,3 @@ variable "node_resource_group" {
   type        = string
   default     = null
 }
-
-
-###########################
-# K8S Additional Node Pools
-###########################
-
-variable "additional_node_pools" {
-  description = "The map object to configure one or several additional node pools with number of worker nodes, worker node VM size and Availability Zones."
-  type = map(object({
-    node_count                     = number
-    vm_size                        = string
-    max_pods                       = string
-    os_disk_size_gb                = string
-    enable_node_public_ip          = bool
-    zones                          = list(string)
-    labels                         = map(string)
-    taints                         = list(string)
-    node_os                        = string
-    cluster_auto_scaling           = bool
-    cluster_auto_scaling_min_count = number
-    cluster_auto_scaling_max_count = number
-  }))
-  default = null
-}
