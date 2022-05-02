@@ -3,12 +3,12 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example" {
-  name     = "aks-resource-group"
+  name     = "aks-resource-group2"
   location = "eastus"
 }
 
 module "network" {
-  source              = "Azure/network/azurerm"
+  source              = "git@github.com:ohkillsh/killsh-module-network.git"
   resource_group_name = azurerm_resource_group.example.name
   address_space       = "10.10.0.0/16"
   subnet_prefixes     = ["10.10.255.0/24", "10.10.0.0/20", "10.10.254.0/24"]
@@ -61,41 +61,6 @@ module "aks" {
 
 
   log_retention_in_days = 31
-
-/*
-  additional_node_pools = {
-    pool1 = {
-      node_count = 1
-      vm_size    = "Standard_D4_v3"
-      zones      = ["1", "2"]
-      node_os    = "Windows"
-      taints = [
-        "kubernetes.io/os=windows:NoSchedule"
-      ]
-      labels                         = null
-      cluster_auto_scaling           = false
-      cluster_auto_scaling_min_count = null
-      cluster_auto_scaling_max_count = null
-      enable_node_public_ip          = false
-      max_pods                       = 110
-      os_disk_size_gb                = 128
-    }
-    pool2 = {
-      node_count                     = 4
-      vm_size                        = "Standard_B2"
-      zones                          = ["1", "2", "3"]
-      node_os                        = "Linux"
-      taints                         = null
-      labels                         = null
-      cluster_auto_scaling           = true
-      cluster_auto_scaling_min_count = 4
-      cluster_auto_scaling_max_count = 12
-      enable_node_public_ip          = false
-      max_pods                       = 110
-      os_disk_size_gb                = 128
-    }
-  }
-*/
 
   depends_on = [module.network]
 }
