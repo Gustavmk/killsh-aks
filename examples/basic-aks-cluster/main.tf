@@ -2,23 +2,24 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "aks-resource-group2"
+resource "azurerm_resource_group" "aks" {
+  name     = "rg-aks-lab"
   location = "eastus"
 }
 
 module "network" {
   source              = "git::https://github.com/ohkillsh/killsh-module-network.git"
-  resource_group_name = azurerm_resource_group.example.name
+  vnet_name           = "vnet-aks-lab"
+  resource_group_name = azurerm_resource_group.aks.name
   address_space       = "10.10.0.0/16"
   subnet_prefixes     = ["10.10.255.0/24", "10.10.0.0/20", "10.10.254.0/24"]
   subnet_names        = ["subnet-infra", "subnet-aks-pod", "subnet-bastion"]
-  depends_on          = [azurerm_resource_group.example]
+  depends_on          = [azurerm_resource_group.aks]
 }
 
 module "aks" {
   source                           = "git::https://github.com/ohkillsh/killsh-modulo-aks"
-  resource_group_name              = azurerm_resource_group.example.name
+  resource_group_name              = azurerm_resource_group.aks.name
   kubernetes_version               = "1.22.6"
   orchestrator_version             = "1.22.6"
   prefix                           = "killsh"
@@ -51,4 +52,29 @@ module "aks" {
   log_retention_in_days = 31
 
   depends_on = [module.network]
+}
+
+
+## Windows node pool
+module "node_pool_win_1" {
+  source             = "git::https://github.com/ohkillsh/killsh-module-aks-node-pool.git"
+  name               = "win1"
+  aks_cluster_id     = module.aks.aks_id
+  kubernetes_version = "1.22.6"
+  node_subnet_id     = module.network.vnet_subnets[1]
+  vm_size            = "Standard_B2s"
+  max_pods           = "110"
+  os_type            = "Windows"
+}
+
+## Linux node pool
+module "node_pool_linux_1" {
+  source             = "git::https://github.com/ohkillsh/killsh-module-aks-node-pool.git"
+  name               = "usrn1"
+  aks_cluster_id     = module.aks.aks_id
+  kubernetes_version = "1.22.6"
+  node_subnet_id     = module.network.vnet_subnets[1]
+  vm_size            = "Standard_B2s"
+  max_pods           = "110"
+  os_type            = "Linux"
 }
