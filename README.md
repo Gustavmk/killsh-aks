@@ -81,7 +81,8 @@ module "aks" {
 }
 ```
 
-Configure kubectl
+### Configure kubectl
+
 ```bash
 
 echo "$(terraform output kube_config_raw)" > ~/.kube/azurek8s
