@@ -159,7 +159,7 @@ variable "rbac_aad_server_app_secret" {
 }
 
 variable "network_plugin" {
-  description = "Network plugin to use for networking. POssible Values: kubenet or azure" 
+  description = "Network plugin to use for networking. POssible Values: kubenet or azure"
   type        = string
   default     = "kubenet"
 }
@@ -323,4 +323,28 @@ variable "node_resource_group" {
   description = "The auto-generated Resource Group which contains the resources for this Managed Kubernetes Cluster."
   type        = string
   default     = null
+}
+
+
+###########################
+# K8S Additional Node Pools
+###########################
+
+variable "additional_node_pools" {
+  description = "The map object to configure one or several additional node pools with number of worker nodes, worker node VM size and Availability Zones."
+  type = map(object({
+    node_count                     = number
+    vm_size                        = string
+    max_pods                       = string
+    os_disk_size_gb                = string
+    enable_node_public_ip          = bool
+    zones                          = list(string)
+    labels                         = map(string)
+    taints                         = list(string)
+    node_os                        = string
+    cluster_auto_scaling           = bool
+    cluster_auto_scaling_min_count = number
+    cluster_auto_scaling_max_count = number
+  }))
+  default = null
 }

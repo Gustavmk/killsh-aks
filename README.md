@@ -80,3 +80,14 @@ module "aks" {
   depends_on = [module.network]
 }
 ```
+
+Configure kubectl
+```bash
+
+echo "$(terraform output kube_config_raw)" > ~/.kube/azurek8s
+
+$env:KUBECONFIG = "C:\Users\gustavo\.kube\azurek8s"
+
+kubectl cluster-info
+
+```

@@ -7,7 +7,74 @@ module "ssh-key" {
   public_ssh_key = var.public_ssh_key == "" ? "" : var.public_ssh_key
 }
 
+
+
+
+/* TODO - fix conditional RBAC - removed from azurerm_kubernetes_cluster.main
+  azure_active_directory_role_based_access_control {
+
+    dynamic "rbac" {
+      for_each = var.enable_role_based_access_control && var.rbac_aad_managed ? ["rbac"] : []
+      content {
+        managed                = true
+        admin_group_object_ids = var.rbac_aad_admin_group_object_ids
+      }
+    }
+
+    dynamic "rbac_sp" {
+      for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac_sp"] : []
+      content {
+        managed           = false
+        client_app_id     = var.rbac_aad_client_app_id
+        server_app_id     = var.rbac_aad_server_app_id
+        server_app_secret = var.rbac_aad_server_app_secret
+      }
+    }
+  }
+*/
+
+
+/* TODO - Addon_Profile is a feature deprecated!
+  addon_profile {
+    http_application_routing {
+      enabled = var.enable_http_application_routing
+    }
+
+    kube_dashboard {
+      enabled = var.enable_kube_dashboard
+    }
+
+    azure_policy {
+      enabled = var.enable_azure_policy
+    }
+
+    oms_agent {
+      enabled                    = var.enable_log_analytics_workspace
+      log_analytics_workspace_id = var.enable_log_analytics_workspace ? azurerm_log_analytics_workspace.main[0].id : null
+    }
+
+    dynamic "ingress_application_gateway" {
+      for_each = var.enable_ingress_application_gateway == null ? [] : ["ingress_application_gateway"]
+      content {
+        enabled      = var.enable_ingress_application_gateway
+        gateway_id   = var.ingress_application_gateway_id
+        gateway_name = var.ingress_application_gateway_name
+        subnet_cidr  = var.ingress_application_gateway_subnet_cidr
+        subnet_id    = var.ingress_application_gateway_subnet_id
+      }
+    }
+  }
+*/
+
 resource "azurerm_kubernetes_cluster" "main" {
+  lifecycle {
+    ignore_changes = [
+      default_node_pool[0].node_count,
+      default_node_pool[0].node_taints
+      #role_based_access_control[0].azure_active_directory[0].server_app_secret
+    ]
+  }
+
   name                    = var.cluster_name == null ? "${var.prefix}-aks" : var.cluster_name
   kubernetes_version      = var.kubernetes_version
   location                = data.azurerm_resource_group.main.location
@@ -27,7 +94,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   dynamic "default_node_pool" {
-    for_each = var.enable_auto_scaling == false ? ["default_node_pool_manually_scaled"] : [] 
+    for_each = var.enable_auto_scaling == false ? ["default_node_pool_manually_scaled"] : []
     content {
       orchestrator_version   = var.orchestrator_version
       name                   = var.agents_pool_name
@@ -35,7 +102,7 @@ resource "azurerm_kubernetes_cluster" "main" {
       vm_size                = var.agents_size
       os_disk_size_gb        = var.os_disk_size_gb
       vnet_subnet_id         = var.vnet_subnet_id
-      enable_auto_scaling    = var.enable_auto_scaling        
+      enable_auto_scaling    = var.enable_auto_scaling
       max_count              = null
       min_count              = null
       enable_node_public_ip  = var.enable_node_public_ip
@@ -80,8 +147,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   dynamic "identity" {
     for_each = var.client_id == "" || var.client_secret == "" ? ["identity"] : []
     content {
-      type           = var.identity_type
-      identity_ids   = var.user_assigned_identity_id
+      type         = var.identity_type
+      identity_ids = var.user_assigned_identity_id
     }
   }
 
@@ -92,67 +159,6 @@ resource "azurerm_kubernetes_cluster" "main" {
       log_analytics_workspace_id = azurerm_log_analytics_workspace.main[0].id
     }
   }
-
-
-# TODO - Addon_Profile is a feature deprecated!
-/*
-  addon_profile {
-    http_application_routing {
-      enabled = var.enable_http_application_routing
-    }
-
-    kube_dashboard {
-      enabled = var.enable_kube_dashboard
-    }
-
-    azure_policy {
-      enabled = var.enable_azure_policy
-    }
-
-    oms_agent {
-      enabled                    = var.enable_log_analytics_workspace
-      log_analytics_workspace_id = var.enable_log_analytics_workspace ? azurerm_log_analytics_workspace.main[0].id : null
-    }
-
-    dynamic "ingress_application_gateway" {
-      for_each = var.enable_ingress_application_gateway == null ? [] : ["ingress_application_gateway"]
-      content {
-        enabled      = var.enable_ingress_application_gateway
-        gateway_id   = var.ingress_application_gateway_id
-        gateway_name = var.ingress_application_gateway_name
-        subnet_cidr  = var.ingress_application_gateway_subnet_cidr
-        subnet_id    = var.ingress_application_gateway_subnet_id
-      }
-    }
-  }
-*/
-
-# TODO - fix conditional RBAC
-
-/* Code removed 
-
-  azure_active_directory_role_based_access_control {
-
-    dynamic "rbac" {
-      for_each = var.enable_role_based_access_control && var.rbac_aad_managed ? ["rbac"] : []
-      content {
-        managed                = true
-        admin_group_object_ids = var.rbac_aad_admin_group_object_ids
-      }
-    }
-
-    dynamic "rbac_sp" {
-      for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac_sp"] : []
-      content {
-        managed           = false
-        client_app_id     = var.rbac_aad_client_app_id
-        server_app_id     = var.rbac_aad_server_app_id
-        server_app_secret = var.rbac_aad_server_app_secret
-      }
-    }
-  }
-
-*/
 
   network_profile {
     network_plugin     = var.network_plugin
@@ -167,6 +173,40 @@ resource "azurerm_kubernetes_cluster" "main" {
   tags = var.tags
 }
 
+# TODO - configurar nodepool de forma dinamica 
+resource "azurerm_kubernetes_cluster_node_pool" "main" {
+  lifecycle {
+    ignore_changes = [
+      node_count
+    ]
+  }
+
+  for_each = var.additional_node_pools
+
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+  orchestrator_version  = var.kubernetes_version
+
+  name                  = each.value.node_os == "Windows" ? substr(each.key, 0, 6) : substr(each.key, 0, 12)
+  node_count            = each.value.node_count
+  vm_size               = each.value.vm_size
+  availability_zones    = each.value.zones
+  max_pods              = each.value.max_pods
+  os_disk_size_gb       = each.value.os_disk_size_gb
+  os_type               = each.value.node_os
+  vnet_subnet_id        = var.vnet_subnet_id
+  node_labels           = each.value.labels
+  node_taints           = each.value.taints
+  enable_auto_scaling   = each.value.cluster_auto_scaling
+  min_count             = each.value.cluster_auto_scaling_min_count
+  max_count             = each.value.cluster_auto_scaling_max_count
+  enable_node_public_ip = each.value.enable_node_public_ip
+
+  upgrade_settings {
+    max_surge = var.max_surge
+  }
+
+  tags = var.tags
+}
 
 resource "azurerm_log_analytics_workspace" "main" {
   count               = var.enable_log_analytics_workspace ? 1 : 0
@@ -263,7 +303,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks_cluster" {
       enabled = false
     }
   }
-  
+
   log {
     category = "guard"
     enabled  = true
@@ -271,8 +311,8 @@ resource "azurerm_monitor_diagnostic_setting" "aks_cluster" {
     retention_policy {
       enabled = false
     }
-  }  
-  
+  }
+
   log {
     category = "csi-azuredisk-controller"
     enabled  = true
