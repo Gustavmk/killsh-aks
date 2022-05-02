@@ -8,6 +8,10 @@ terraform.tfvars
 *.tfstate.backup
 *.tfvars
 
+# Lock.hcl and plans
+*.lock.hcl
+*.tfplan
+
 # Terraform directory
 .terraform/
 terraform.tfstate.d/
@@ -47,4 +51,4 @@ Gemfile.lock
 .terraform.tfstate.lock.info
 
 # SSH Key
-private_ssh_key
+*_key
