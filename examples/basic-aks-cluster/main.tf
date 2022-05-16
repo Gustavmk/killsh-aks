@@ -54,7 +54,19 @@ module "aks" {
   depends_on = [module.network]
 }
 
+## Linux node pool
+module "node_pool_linux_1" {
+  source             = "git::https://github.com/ohkillsh/killsh-module-aks-node-pool.git"
+  name               = "usrn1"
+  aks_cluster_id     = module.aks.aks_id
+  kubernetes_version = "1.22.6"
+  node_subnet_id     = module.network.vnet_subnets[1]
+  vm_size            = "Standard_B2s"
+  max_pods           = "110"
+  os_type            = "Linux"
+}
 
+/*
 ## Windows node pool
 module "node_pool_win_1" {
   source             = "git::https://github.com/ohkillsh/killsh-module-aks-node-pool.git"
@@ -67,14 +79,4 @@ module "node_pool_win_1" {
   os_type            = "Windows"
 }
 
-## Linux node pool
-module "node_pool_linux_1" {
-  source             = "git::https://github.com/ohkillsh/killsh-module-aks-node-pool.git"
-  name               = "usrn1"
-  aks_cluster_id     = module.aks.aks_id
-  kubernetes_version = "1.22.6"
-  node_subnet_id     = module.network.vnet_subnets[1]
-  vm_size            = "Standard_B2s"
-  max_pods           = "110"
-  os_type            = "Linux"
-}
+*/
