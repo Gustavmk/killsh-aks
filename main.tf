@@ -8,32 +8,6 @@ module "ssh-key" {
 }
 
 
-
-
-/* TODO - fix conditional RBAC - removed from azurerm_kubernetes_cluster.main
-  azure_active_directory_role_based_access_control {
-
-    dynamic "rbac" {
-      for_each = var.enable_role_based_access_control && var.rbac_aad_managed ? ["rbac"] : []
-      content {
-        managed                = true
-        admin_group_object_ids = var.rbac_aad_admin_group_object_ids
-      }
-    }
-
-    dynamic "rbac_sp" {
-      for_each = var.enable_role_based_access_control && !var.rbac_aad_managed ? ["rbac_sp"] : []
-      content {
-        managed           = false
-        client_app_id     = var.rbac_aad_client_app_id
-        server_app_id     = var.rbac_aad_server_app_id
-        server_app_secret = var.rbac_aad_server_app_secret
-      }
-    }
-  }
-*/
-
-
 /* TODO - Addon_Profile is a feature deprecated!
   addon_profile {
     http_application_routing {
@@ -70,8 +44,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   lifecycle {
     ignore_changes = [
       default_node_pool[0].node_count,
-      default_node_pool[0].node_taints
-      #role_based_access_control[0].azure_active_directory[0].server_app_secret
+      default_node_pool[0].node_taints,
+      role_based_access_control[0].azure_active_directory[0].server_app_secret
     ]
   }
 
@@ -172,43 +146,6 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   tags = var.tags
 }
-
-
-/* moved to new module
-resource "azurerm_kubernetes_cluster_node_pool" "main" {
-  lifecycle {
-    ignore_changes = [
-      node_count
-    ]
-  }
-
-  for_each = var.additional_node_pools
-
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
-  orchestrator_version  = var.kubernetes_version
-
-  name                  = each.value.node_os == "Windows" ? substr(each.key, 0, 6) : substr(each.key, 0, 12)
-  node_count            = each.value.node_count
-  vm_size               = each.value.vm_size
-  zones                 = each.value.zones
-  max_pods              = each.value.max_pods
-  os_disk_size_gb       = each.value.os_disk_size_gb
-  os_type               = each.value.node_os
-  vnet_subnet_id        = var.vnet_subnet_id
-  node_labels           = each.value.labels
-  node_taints           = each.value.taints
-  enable_auto_scaling   = each.value.cluster_auto_scaling
-  min_count             = each.value.cluster_auto_scaling_min_count
-  max_count             = each.value.cluster_auto_scaling_max_count
-  enable_node_public_ip = each.value.enable_node_public_ip
-
-  upgrade_settings {
-    max_surge = var.cluster_max_surge
-  }
-
-  tags = var.tags
-}
-*/
 
 resource "azurerm_log_analytics_workspace" "main" {
   count               = var.enable_log_analytics_workspace ? 1 : 0

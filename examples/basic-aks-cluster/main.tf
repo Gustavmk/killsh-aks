@@ -24,7 +24,7 @@ module "aks" {
   orchestrator_version             = "1.22.6"
   prefix                           = "killsh"
   cluster_name                     = "dev-killsh"
-  os_disk_size_gb                  = 50
+  os_disk_size_gb                  = 64
   enable_role_based_access_control = false
   enable_auto_scaling              = true
   agents_min_count                 = 1
