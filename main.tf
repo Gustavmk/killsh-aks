@@ -7,45 +7,11 @@ module "ssh-key" {
   public_ssh_key = var.public_ssh_key == "" ? "" : var.public_ssh_key
 }
 
-
-/* TODO - Addon_Profile is a feature deprecated!
-  addon_profile {
-    http_application_routing {
-      enabled = var.enable_http_application_routing
-    }
-
-    kube_dashboard {
-      enabled = var.enable_kube_dashboard
-    }
-
-    azure_policy {
-      enabled = var.enable_azure_policy
-    }
-
-    oms_agent {
-      enabled                    = var.enable_log_analytics_workspace
-      log_analytics_workspace_id = var.enable_log_analytics_workspace ? azurerm_log_analytics_workspace.main[0].id : null
-    }
-
-    dynamic "ingress_application_gateway" {
-      for_each = var.enable_ingress_application_gateway == null ? [] : ["ingress_application_gateway"]
-      content {
-        enabled      = var.enable_ingress_application_gateway
-        gateway_id   = var.ingress_application_gateway_id
-        gateway_name = var.ingress_application_gateway_name
-        subnet_cidr  = var.ingress_application_gateway_subnet_cidr
-        subnet_id    = var.ingress_application_gateway_subnet_id
-      }
-    }
-  }
-*/
-
 resource "azurerm_kubernetes_cluster" "main" {
   lifecycle {
     ignore_changes = [
       default_node_pool[0].node_count,
-      default_node_pool[0].node_taints,
-      role_based_access_control[0].azure_active_directory[0].server_app_secret
+      default_node_pool[0].node_taints
     ]
   }
 

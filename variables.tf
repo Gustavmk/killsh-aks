@@ -225,9 +225,9 @@ variable "agents_max_count" {
 }
 
 variable "cluster_max_surge" {
-  type = string
+  type        = string
   description = "value"
-  default = "50%"
+  default     = "50%"
 }
 
 variable "agents_min_count" {
