@@ -142,6 +142,7 @@ resource "azurerm_log_analytics_solution" "main" {
 
 
 resource "azurerm_monitor_diagnostic_setting" "aks_cluster" {
+  count                      = var.enable_log_analytics_workspace ? 1 : 0
   name                       = "${azurerm_kubernetes_cluster.main.name}-audit"
   target_resource_id         = azurerm_kubernetes_cluster.main.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.main[0].id
