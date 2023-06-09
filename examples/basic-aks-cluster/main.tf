@@ -48,8 +48,7 @@ module "aks" {
   network_plugin                 = "azure"
   net_profile_dns_service_ip     = "10.10.16.10"   # IP address of DNS service and should be the .10 of service CIDR
   net_profile_service_cidr       = "10.10.16.0/20" # A CIDR notation IP range from which to assign service cluster IPs.
-  net_profile_docker_bridge_cidr = "10.10.32.0/20" # lets the AKS nodes communicate with the underlying management platform
-
+ 
   #log_retention_in_days = 31
 
   depends_on = [module.network]

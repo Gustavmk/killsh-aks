@@ -104,7 +104,6 @@ resource "azurerm_kubernetes_cluster" "main" {
     network_plugin     = var.network_plugin
     network_policy     = var.network_policy
     dns_service_ip     = var.net_profile_dns_service_ip
-    docker_bridge_cidr = var.net_profile_docker_bridge_cidr
     outbound_type      = var.net_profile_outbound_type
     pod_cidr           = var.net_profile_pod_cidr
     service_cidr       = var.net_profile_service_cidr
