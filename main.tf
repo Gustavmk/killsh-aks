@@ -101,12 +101,12 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   network_profile {
-    network_plugin     = var.network_plugin
-    network_policy     = var.network_policy
-    dns_service_ip     = var.net_profile_dns_service_ip
-    outbound_type      = var.net_profile_outbound_type
-    pod_cidr           = var.net_profile_pod_cidr
-    service_cidr       = var.net_profile_service_cidr
+    network_plugin = var.network_plugin
+    network_policy = var.network_policy
+    dns_service_ip = var.net_profile_dns_service_ip
+    outbound_type  = var.net_profile_outbound_type
+    pod_cidr       = var.net_profile_pod_cidr
+    service_cidr   = var.net_profile_service_cidr
   }
 
   tags = var.tags
@@ -139,118 +139,3 @@ resource "azurerm_log_analytics_solution" "main" {
   tags = var.tags
 }
 
-
-resource "azurerm_monitor_diagnostic_setting" "aks_cluster" {
-  count                      = var.enable_log_analytics_workspace ? 1 : 0
-  name                       = "${azurerm_kubernetes_cluster.main.name}-audit"
-  target_resource_id         = azurerm_kubernetes_cluster.main.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.main[0].id
-
-  log {
-    category = "kube-apiserver"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "kube-controller-manager"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "cluster-autoscaler"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "kube-scheduler"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "kube-audit"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "kube-audit-admin"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "cloud-controller-manager"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "guard"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "csi-azuredisk-controller"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "csi-azurefile-controller"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  log {
-    category = "csi-snapshot-controller"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  metric {
-    category = "AllMetrics"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-    }
-  }
-}
