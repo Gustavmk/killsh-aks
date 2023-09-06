@@ -3,6 +3,8 @@ data "azurerm_resource_group" "main" {
 }
 
 module "ssh-key" {
+  count = var.enable_ssh_key ? 1 : 0
+
   source         = "./modules/ssh-key"
   public_ssh_key = var.public_ssh_key == "" ? "" : var.public_ssh_key
 }
