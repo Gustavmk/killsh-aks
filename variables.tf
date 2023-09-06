@@ -62,6 +62,12 @@ variable "agents_count" {
   default     = 2
 }
 
+variable "enable_ssh_key" {
+  description = "Automatic create ssh key. Recommended only in Dev environments."
+  type = bool
+  default = false
+  
+}
 variable "public_ssh_key" {
   description = "A custom ssh key to control access to the AKS cluster"
   type        = string
